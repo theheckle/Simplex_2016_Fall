@@ -1,5 +1,5 @@
 /*----------------------------------------------
-Programmer: Alberto Bobadilla (labigm@gmail.com)
+Programmer: Sam Heckle (sxh4716@rit.edu)
 Date: 2017/05
 ----------------------------------------------*/
 #ifndef __APPLICATIONCLASS_H_
@@ -14,10 +14,10 @@ Date: 2017/05
 
 class Application
 {
-	MyMesh* m_pMesh = nullptr;
-	MyMesh* m_pMesh1 = nullptr;
+	uint m_uMeshCount;
+	std::vector<MyMesh*> m_pMeshList;
 
-	String m_sProgrammer = "Alberto Bobadilla - labigm@rit.edu";
+	String m_sProgrammer = "Sam Heckle - sxh4716@rit.edu";
 private:
 	static ImGuiObject gui; //GUI object
 
