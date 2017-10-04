@@ -169,7 +169,7 @@ public:
 	-	vector3 a_v3Color -> Color of the mesh
 	OUTPUT: ---
 	*/
-	void GenerateCone(float a_fRadius, float a_fHeight, int a_nSubdivisions, vector3 a_v3Color = C_WHITE);
+	void GenerateCone(float a_fRadius, float a_fHeight, float a_nSubdivisions, vector3 a_v3Color = C_WHITE);
 	/*
 	USAGE: Generates a cylinder mesh
 	ARGUMENTS:
