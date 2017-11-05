@@ -15,6 +15,12 @@ class MyCamera
 	vector3 m_v3Position = vector3(0.0f, 0.0f, 10.0f); //Where my camera is located
 	vector3 m_v3Target = vector3(0.0f, 0.0f, 0.0f); //What I'm looking at
 	vector3 m_v3Up = vector3(0.0f, 1.0f, 0.0f); //What is up
+	vector3 m_v3Forward = vector3(0.0f, 0.0f, 1.0f);
+	vector3 m_v3Rightward = vector3(1.0f, 0.0f, 0.0f);
+	vector3 m_v3Top = vector3(0.0f, 1.0f, 0.0f);
+
+	quaternion rotX;
+	quaternion rotY;
 
 	bool m_bPerspective = true; //perspective view? False is Orthographic
 
@@ -28,6 +34,8 @@ class MyCamera
 
 	matrix4 m_m4View; //View matrix
 	matrix4 m_m4Projection; //Projection Matrix
+	matrix4 m_m4RotationX;
+	matrix4 m_m4RotationY;
 public:
 	/*
 	USAGE: Constructor
@@ -188,6 +196,26 @@ public:
 	*/
 	void ResetCamera(void);
 
+	// Method: MoveForward
+	// Purpose: change the position and target based on change in forward vector
+	// params: change of forward distance 
+	void MoveForward(float a_fDistance);
+
+	// Method: MoveVertical
+	// Purpose: change the position and target based on change in up vector
+	// params: change of up distance
+	void MoveVertical(float a_fDistance);
+
+	// Method: MoveSideways
+	// Purpose: change the position and target based on change in right vector
+	// params: change of right distance
+	void MoveSideways(float a_fDistance);
+
+	// Method: ChangePitchYaw
+	// Purpose: change the rotation of the camera
+	// params: degree of rotation in X, degree of rotation in Y
+	void ChangePitchYaw(float a_fDegreeX, float a_fDegreeY);
+
 	/*
 	USAGE: Set the position target and up of the camera at once
 	ARGUMENTS:
@@ -196,6 +224,7 @@ public:
 	-	vector3 a_v3Upward -> What is up
 	OUTPUT: ---
 	*/
+
 	void SetPositionTargetAndUp(vector3 a_v3Position, vector3 a_v3Target, vector3 a_v3Upward = AXIS_Y);
 
 	/*

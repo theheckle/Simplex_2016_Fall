@@ -2,8 +2,8 @@
 using namespace Simplex;
 void Application::InitVariables(void)
 {
-	////Change this to your name and email
-	//m_sProgrammer = "Alberto Bobadilla - labigm@rit.edu";
+	//Change this to your name and email
+	m_sProgrammer = "Sam Heckle - sxh4716@rit.edu";
 
 	////Alberto needed this at this position for software recording.
 	//m_pWindow->setPosition(sf::Vector2i(710, 0));

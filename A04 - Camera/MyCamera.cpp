@@ -3,10 +3,11 @@ using namespace Simplex;
 
 //Accessors
 void Simplex::MyCamera::SetPosition(vector3 a_v3Position) { m_v3Position = a_v3Position; }
-
+vector3 Simplex::MyCamera::GetPosition(void) { return m_v3Position; }
 void Simplex::MyCamera::SetTarget(vector3 a_v3Target) { m_v3Target = a_v3Target; }
-
+vector3 Simplex::MyCamera::GetTarget(void) { return m_v3Target; }
 void Simplex::MyCamera::SetUp(vector3 a_v3Up) { m_v3Up = a_v3Up; }
+vector3 Simplex::MyCamera::GetUp(void) { return m_v3Up; }
 
 void Simplex::MyCamera::SetPerspective(bool a_bPerspective) { m_bPerspective = a_bPerspective; }
 
@@ -125,11 +126,83 @@ void Simplex::MyCamera::ResetCamera(void)
 	CalculateViewMatrix();
 }
 
+void Simplex::MyCamera::MoveForward(float a_fDistance)
+{
+	// calculate new position, target, and top based on forward vector
+	m_v3Position += m_v3Forward * a_fDistance;
+	m_v3Target += m_v3Forward * a_fDistance;
+	m_v3Top += m_v3Forward * a_fDistance;
+
+	// recalculating forward, up and right vectors based on new position, target, and up
+	m_v3Forward = glm::normalize(m_v3Target - m_v3Position);
+	m_v3Up = glm::normalize(m_v3Top - m_v3Position);
+	m_v3Rightward = glm::normalize(glm::cross(m_v3Forward, m_v3Up));
+	
+	CalculateProjectionMatrix();
+
+}
+
+void Simplex::MyCamera::MoveVertical(float a_fDistance)
+{
+	// calculate new position, target, and top based on up vector
+	m_v3Position += m_v3Up * a_fDistance;
+	m_v3Target += m_v3Up* a_fDistance;
+	m_v3Top += m_v3Up * a_fDistance;
+
+	// recalculating forward, up and right vectors based on new position, target, and up
+	m_v3Forward = glm::normalize(m_v3Target - m_v3Position);
+	m_v3Up = glm::normalize(m_v3Top - m_v3Position);
+	m_v3Rightward = glm::normalize(glm::cross(m_v3Forward, m_v3Up));
+
+	CalculateProjectionMatrix();
+}
+
+void Simplex::MyCamera::MoveSideways(float a_fDistance)
+{
+	// calculate new position, target, and top based on right vector
+	m_v3Position += m_v3Rightward * a_fDistance;
+	m_v3Target += m_v3Rightward * a_fDistance;
+	m_v3Top += m_v3Rightward * a_fDistance;
+
+	// recalculating forward, up and right vectors based on new position, target, and up
+	m_v3Forward = glm::normalize(m_v3Target - m_v3Position);
+	m_v3Up = glm::normalize(m_v3Top - m_v3Position);
+	m_v3Rightward = glm::normalize(glm::cross(m_v3Forward, m_v3Up));
+
+	CalculateProjectionMatrix();
+
+}
+
+void Simplex::MyCamera::ChangePitchYaw(float a_fDegreeX, float a_fDegreeY)
+{
+	// calculate the rotations in quaternions
+	rotX = glm::angleAxis(glm::degrees(a_fDegreeX) / 2.0f, m_v3Rightward);
+	rotY = glm::angleAxis(glm::degrees(a_fDegreeY) / 2.0f, m_v3Up);
+
+	// calculate new forward vector by rotating using cross and normals
+	m_v3Forward = glm::rotate(glm::cross(rotX,rotY), glm::normalize(m_v3Target - m_v3Position));
+
+	// calculate new right vector using the cross between the new forward and up
+	m_v3Rightward = glm::normalize(glm::cross(m_v3Forward, m_v3Up));
+
+	// calculate new target based on position and new forward
+	m_v3Target = m_v3Position + m_v3Forward;
+
+	// calculate new top 
+	m_v3Top = m_v3Position + m_v3Up;
+}
+
 void Simplex::MyCamera::SetPositionTargetAndUp(vector3 a_v3Position, vector3 a_v3Target, vector3 a_v3Upward)
 {
 	m_v3Position = a_v3Position;
 	m_v3Target = a_v3Target;
-	m_v3Up = a_v3Position + a_v3Upward;
+	m_v3Up = glm::normalize(a_v3Upward);
+
+	// setting the top, forward, and right vectors based on arguments passed in
+	m_v3Top = a_v3Position + m_v3Up;
+	m_v3Forward = glm::normalize(m_v3Target - m_v3Position);
+	m_v3Rightward = glm::normalize(glm::cross(m_v3Forward, m_v3Up));
+
 	CalculateProjectionMatrix();
 }
 
@@ -149,8 +222,8 @@ void Simplex::MyCamera::CalculateProjectionMatrix(void)
 	}
 	else
 	{
-		m_m4Projection = glm::ortho(	m_v2Horizontal.x * fRatio, m_v2Horizontal.y * fRatio, //horizontal
-										m_v2Vertical.x, m_v2Vertical.y, //vertical
-										m_v2NearFar.x, m_v2NearFar.y); //near and far
+		m_m4Projection = glm::ortho(m_v2Horizontal.x * fRatio, m_v2Horizontal.y * fRatio, //horizontal
+			m_v2Vertical.x, m_v2Vertical.y, //vertical
+			m_v2NearFar.x, m_v2NearFar.y); //near and far
 	}
 }
