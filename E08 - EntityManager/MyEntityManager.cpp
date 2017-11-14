@@ -4,9 +4,15 @@ using namespace Simplex;
 MyEntityManager* MyEntityManager::m_pInstance = nullptr;
 void MyEntityManager::Init(void)
 {
+	m_uEntityCount = 0;
+	m_entityList.clear();
 }
 void MyEntityManager::Release(void)
 {
+	for (uint i = 0; i < m_entityList.size; i++) {
+		SafeDelete(m_entityList[i]);
+	}
+	Init();
 }
 MyEntityManager* MyEntityManager::GetInstance()
 {
@@ -18,9 +24,20 @@ MyEntityManager* MyEntityManager::GetInstance()
 }
 void MyEntityManager::ReleaseInstance()
 {
+	if (m_pInstance != nullptr) {
+		delete m_pInstance;
+	}
+
+	m_pInstance = nullptr;
 }
 int Simplex::MyEntityManager::GetEntityIndex(String a_sUniqueID)
 {
+	for (uint i = 0; i < m_entityList.size; i++) {
+		if (m_entityList[i]->GetUniqueID() == a_sUniqueID) {
+			return i;
+		}
+	}
+
 	return -1;
 }
 //Accessors
@@ -68,23 +85,39 @@ void Simplex::MyEntityManager::Update(void)
 }
 void Simplex::MyEntityManager::AddEntity(String a_sFileName, String a_sUniqueID)
 {
-
+	MyEntity* temp = new MyEntity(a_sFileName, a_sUniqueID);
+	m_entityList.push_back(temp);
+	m_uEntityCount++;
 }
 void Simplex::MyEntityManager::RemoveEntity(uint a_uIndex)
 {
-
+	if (m_entityList.size<0) {
+		return;
+	}
+	for (uint i = 0; i < m_entityList.size; i++) {
+		if (i == a_uIndex) {
+			delete(m_entityList[i]);
+		}
+	}
 }
 void Simplex::MyEntityManager::RemoveEntity(String a_sUniqueID)
 {
-
+	if (m_entityList.size<0) {
+		return;
+	}
+	for (uint i = 0; i < m_entityList.size; i++) {
+		if (m_entityList[i]->GetUniqueID() == a_sUniqueID) {
+			delete(m_entityList[i]);
+		}
+	}
 }
 String Simplex::MyEntityManager::GetUniqueID(uint a_uIndex)
 {
-	return "";
+	return m_entityList[a_uIndex]->GetUniqueID();
 }
 MyEntity* Simplex::MyEntityManager::GetEntity(uint a_uIndex)
 {
-	return nullptr;
+	return m_entityList[a_uIndex];
 }
 void Simplex::MyEntityManager::AddEntityToRenderList(uint a_uIndex, bool a_bRigidBody)
 {
