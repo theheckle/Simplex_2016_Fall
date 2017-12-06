@@ -20,6 +20,7 @@ namespace Simplex
 		uint m_uID = 0; //Will store the current ID for this octant
 		uint m_uLevel = 0; //Will store the current level of the octant
 		uint m_uChildren = 0;// Number of children on the octant (either 0 or 8)
+		uint m_uEntityCount;		// count of number of entities in entity manager
 
 		float m_fSize = 0.0f; //Size of the octant
 
@@ -47,7 +48,7 @@ namespace Simplex
 		- uint nIdealEntityCount = 5 -> Sets the ideal level of objects per octant
 		OUTPUT: class object
 		*/
-		MyOctant(uint a_nMaxLevel, uint a_nIdealEntityCount);
+		MyOctant(uint a_nMaxLevel = 2, uint a_nIdealEntityCount = 5);
 		/*
 		USAGE: Constructor
 		ARGUMENTS:
@@ -184,7 +185,7 @@ namespace Simplex
 		- uint a_nMaxLevel = 3 -> Sets the maximum level of the tree while constructing it
 		OUTPUT: ---
 		*/
-		void ConstructTree(uint a_nMaxLevel = 3);
+		void ConstructTree(uint a_nMaxLevel);
 		/*
 		USAGE: Traverse the tree up to the leafs and sets the objects in them to the index
 		ARGUMENTS: ---
